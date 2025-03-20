@@ -9,13 +9,20 @@ def download_video():
     url = request.args.get('url')
     if not url:
         return "Missing URL", 400
+    
+    # Basic URL validation (optional: improve with regex if needed)
+    if not url.startswith(('http://', 'https://')):
+        return "Invalid URL: Must start with http:// or https://", 400
 
     ydl_opts = {
         'format': 'best',
     }
-    with YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url, download=False)
-        video_url = info['url']
+    try:
+        with YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+            video_url = info['url']
+    except Exception as e:
+        return f"Error processing URL: {str(e)}", 400
 
     def generate():
         with requests.get(video_url, stream=True) as r:
