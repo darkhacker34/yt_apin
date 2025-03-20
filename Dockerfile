@@ -2,7 +2,7 @@ FROM python:3.13-slim
 
 WORKDIR /app
 COPY main.py .
-COPY cookies.txt .  # Copy the cookies file
+COPY cookies.txt .  # Ensure this line is present
 
 RUN apt-get update && apt-get install -y \
     ffmpeg \
