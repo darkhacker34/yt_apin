@@ -13,13 +13,10 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-RUN pip install --no-cache-dir flask yt-dlp requests
+RUN pip install --no-cache-dir flask yt-dlp requests gunicorn
 
-# Expose port 5000 (Flask's default port)
+# Expose port 8000
 EXPOSE 8000
 
-# Set environment variable to ensure Flask runs in production mode
-ENV FLASK_ENV=production
-
-# Command to run the Flask app explicitly specifying the app
-CMD ["flask", "run", "--app", "main", "--host=0.0.0.0", "--port=8000"]
+# Command to run the Flask app with Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "main:app"]
