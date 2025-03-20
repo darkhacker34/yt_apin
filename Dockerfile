@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --no-cache-dir flask yt-dlp requests
 
 # Expose port 5000 (Flask's default port)
-EXPOSE 5000
+EXPOSE 8000
 
 # Set environment variable to ensure Flask runs in production mode
 ENV ENV FLASK_APP=main.py
