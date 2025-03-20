@@ -19,8 +19,7 @@ RUN pip install --no-cache-dir flask yt-dlp requests
 EXPOSE 8000
 
 # Set environment variable to ensure Flask runs in production mode
-ENV ENV FLASK_APP=main.py
 ENV FLASK_ENV=production
 
-# Command to run the Flask app
-CMD ["flask", "run", "--host=0.0.0.0", "--port=8000"]
+# Command to run the Flask app explicitly specifying the app
+CMD ["flask", "run", "--app", "main", "--host=0.0.0.0", "--port=8000"]
