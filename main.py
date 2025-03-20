@@ -1,5 +1,6 @@
 from flask import Flask, request, Response
 from yt_dlp import YoutubeDL
+from yt_dlp.utils import DownloadError, ExtractorError
 import requests
 
 app = Flask(__name__)
@@ -9,20 +10,28 @@ def download_video():
     url = request.args.get('url')
     if not url:
         return "Missing URL", 400
-    
-    # Basic URL validation (optional: improve with regex if needed)
     if not url.startswith(('http://', 'https://')):
         return "Invalid URL: Must start with http:// or https://", 400
 
     ydl_opts = {
-        'format': 'best',
-    }
+    'format': 'best',
+    'cookiefile': '/app/cookies.txt',
+    'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+}
+    
     try:
         with YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
             video_url = info['url']
+    except (DownloadError, ExtractorError) as e:
+        error_msg = str(e)
+        if "Sign in to confirm" in error_msg:
+            return "This video requires authentication. Please try a different video or contact support.", 403
+        elif "Too Many Requests" in error_msg:
+            return "Rate limit exceeded by YouTube. Please try again later.", 429
+        return f"Error processing URL: {error_msg}", 400
     except Exception as e:
-        return f"Error processing URL: {str(e)}", 400
+        return f"Unexpected error: {str(e)}", 500
 
     def generate():
         with requests.get(video_url, stream=True) as r:
