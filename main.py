@@ -15,7 +15,7 @@ def download_video():
 
     ydl_opts = {
         'format': 'best',
-        'cookiefile': '/app/cookies.txt',  # Path inside the container
+        'cookiefile': '/app/cookies.txt',  # Use cookies file
     }
     try:
         with YoutubeDL(ydl_opts) as ydl:
