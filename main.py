@@ -14,11 +14,9 @@ def download_video():
         return "Invalid URL: Must start with http:// or https://", 400
 
     ydl_opts = {
-    'format': 'best',
-    'cookiefile': '/app/cookies.txt',
-    'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-}
-    
+        'format': 'best',
+        'cookiefile': '/app/cookies.txt',  # Path inside the container
+    }
     try:
         with YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
@@ -26,7 +24,7 @@ def download_video():
     except (DownloadError, ExtractorError) as e:
         error_msg = str(e)
         if "Sign in to confirm" in error_msg:
-            return "This video requires authentication. Please try a different video or contact support.", 403
+            return "This video requires authentication. Cookies may be expired or invalid.", 403
         elif "Too Many Requests" in error_msg:
             return "Rate limit exceeded by YouTube. Please try again later.", 429
         return f"Error processing URL: {error_msg}", 400
